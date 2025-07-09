@@ -31,16 +31,9 @@ func main() {
 	r.POST("/signup", handlers.UserSignupHandler(db))
 	r.POST("/login", handlers.UserLoginHandler(db))
 
-	protected := r.Group("/api")
-	protected.Use(middleware.JWTAuthMiddleware())
-	protected.GET("/profile", func(c *gin.Context) {
-		userID := c.GetInt("user_id")
-		role := c.GetString("role")
-		c.JSON(200, gin.H{
-			"user_id": userID,
-			"role":    role,
-		})
-	})
-
+	admin := r.Group("/api/admin")
+	admin.Use(middleware.JWTAuthMiddleware(), middleware.AdminOnly())
+	admin.POST("/events", handlers.CreateEventHandler(db))
+	
 	r.Run(":8080") // listen and serve on
 }
