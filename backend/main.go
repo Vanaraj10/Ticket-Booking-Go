@@ -28,6 +28,7 @@ func main() {
 	})
 
 	r.POST("/signup",handlers.UserSignupHandler(db))
+	r.POST("/login", handlers.UserLoginHandler(db))
 
 	r.Run(":8080") // listen and serve on
 }
