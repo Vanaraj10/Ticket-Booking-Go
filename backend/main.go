@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/Vanaraj10/Ticket-Booking-Go/config"
+	"github.com/Vanaraj10/Ticket-Booking-Go/handlers"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
@@ -25,6 +26,8 @@ func main() {
 			"message": "pong",
 		})
 	})
+
+	r.POST("/signup",handlers.UserSignupHandler(db))
 
 	r.Run(":8080") // listen and serve on
 }
