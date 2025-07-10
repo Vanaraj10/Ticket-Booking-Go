@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./HomePage.css"; // Assuming you have a CSS file for styling
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
@@ -69,6 +70,7 @@ export default function HomePage() {
 
   return (
     <div>
+       <Link to={"/my-bookings"} className="my-bookings-link">My Bookings</Link>
       <h2>Events</h2>
       {events.length === 0 && <p>No Events Found</p>}
       <ul>
@@ -97,6 +99,7 @@ export default function HomePage() {
                   required
                 />
                 <button type="submit">Confirm</button>
+                <button onClick={()=>setBookingEventId(null)}>Cancel</button>
                 {bookingMessage && <div color="white">{bookingMessage}</div>}
               </form>
             )}
