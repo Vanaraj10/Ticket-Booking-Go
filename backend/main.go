@@ -37,6 +37,8 @@ func main() {
 	admin := r.Group("/api/admin")
 	admin.Use(middleware.JWTAuthMiddleware(), middleware.AdminOnly())
 	admin.POST("/events", handlers.CreateEventHandler(db))
+	admin.DELETE("/events/:event_id", handlers.DeleteEventHandler(db))
+	admin.GET("/events/:event_id/bookings",handlers.ListEventBookingsHandler(db))
 
 	user := r.Group("/api/user")
 	user.Use(middleware.JWTAuthMiddleware())

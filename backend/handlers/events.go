@@ -178,7 +178,7 @@ func ListUserBookingsHandler(db *sql.DB) gin.HandlerFunc {
 			var id, eventID, ticketsBooked int
 			var eventName string
 			var bookedAt time.Time
-			if err := rows.Scan(&id, &eventID, & eventName, &ticketsBooked, &bookedAt); err != nil {
+			if err := rows.Scan(&id, &eventID, &eventName, &ticketsBooked, &bookedAt); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"error":   "Failed to scan booking data",
 					"message": err.Error(),
@@ -186,15 +186,82 @@ func ListUserBookingsHandler(db *sql.DB) gin.HandlerFunc {
 				return
 			}
 			bookings = append(bookings, map[string]interface{}{
-				"id":			id,
-				"event_id":		eventID,
-				"event_name":	eventName,
+				"id":             id,
+				"event_id":       eventID,
+				"event_name":     eventName,
 				"tickets_booked": ticketsBooked,
-				"booked_at":	bookedAt,
+				"booked_at":      bookedAt,
 			})
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"bookings": bookings,
+		})
+	}
+}
+
+func ListEventBookingsHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		eventID := c.Param("event_id")
+
+		rows, err := db.Query(`SELECT b.id, u.username, b.tickets_booked, b.booked_at
+							   FROM bookings b
+							   JOIN users u ON b.user_id=u.id
+							   WHERE b.event_id = $1
+							   ORDER BY b.booked_at DESC
+							   `, eventID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to retrieve bookings",
+				"message": err.Error(),
+			})
+			return
+		}
+		defer rows.Close()
+
+		bookings := []map[string]interface{}{}
+		for rows.Next() {
+			var id, tickets_booked int
+			var username string
+			var bookedAt time.Time
+			if err := rows.Scan(&id, &username, &tickets_booked, &bookedAt); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error":   "Failed to scan booking data",
+					"message": err.Error(),
+				})
+			}
+			bookings = append(bookings, map[string]interface{}{
+				"id":             id,
+				"username":       username,
+				"tickets_booked": tickets_booked,
+				"booked_at":      bookedAt,
+			})
+		}
+		c.JSON(http.StatusOK, gin.H{"bookings": bookings})
+	}
+}
+
+func DeleteEventHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		eventID := c.Param("event_id")
+
+		res, err := db.Exec(`DELETE FROM events WHERE id = $1`, eventID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to delete event",
+				"message": err.Error(),
+			})
+			return
+		}
+		rowsAffected, _ := res.RowsAffected()
+		if rowsAffected == 0 {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error":   "Event not found",
+				"message": "No event found with the given ID",
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"message":"Event Deleted Successfully",
 		})
 	}
 }
