@@ -7,11 +7,18 @@ import (
 	"github.com/Vanaraj10/Ticket-Booking-Go/config"
 	"github.com/Vanaraj10/Ticket-Booking-Go/handlers"
 	"github.com/Vanaraj10/Ticket-Booking-Go/middleware"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
 func main() {
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{"*"} // Allow all origins
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
+	corsConfig.AllowCredentials = true
 
 	db, err := config.ConnectDB()
 	if err != nil {
@@ -22,6 +29,7 @@ func main() {
 	fmt.Println("Connected to the database successfully")
 
 	r := gin.Default()
+	r.Use(cors.New(corsConfig)) // Enable CORS
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
