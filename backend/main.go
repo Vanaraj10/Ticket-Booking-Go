@@ -41,6 +41,7 @@ func main() {
 	user := r.Group("/api/user")
 	user.Use(middleware.JWTAuthMiddleware())
 	user.POST("/book", handlers.BookEventHandler(db))
+	user.GET("/bookings",handlers.ListUserBookingsHandler(db))
 
 	r.Run(":8080")
 }
