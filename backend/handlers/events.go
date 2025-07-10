@@ -69,17 +69,87 @@ func ListEventHandler(db *sql.DB) gin.HandlerFunc {
 				return
 			}
 			events = append(events, map[string]interface{}{
-				"id":id,
-				"name": Name,
-				"description":Description,
-				"total_tickets": TotalTickets,
+				"id":                id,
+				"name":              Name,
+				"description":       Description,
+				"total_tickets":     TotalTickets,
 				"available_tickets": AvailableTickets,
-				"event_date": EventDate,
-				"created_by": CreatedBy,
+				"event_date":        EventDate,
+				"created_by":        CreatedBy,
 			})
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"events": events,
+		})
+	}
+}
+
+func BookEventHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req struct {
+			EventID       int `json:"event_id" binding:"required"`
+			TicketsBooked int `json:"tickets_booked" binding:"required"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Invalid request data",
+				"message": err.Error(),
+			})
+		}
+
+		userID := c.GetInt("user_id")
+		var available int
+		err := db.QueryRow(`SELECT available_tickets FROM events WHERE id = $1`, req.EventID).Scan(&available)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error":   "Event not found",
+				"message": err.Error(),
+			})
+		}
+		if req.TicketsBooked > available {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Not enough tickets available",
+				"message": "Requested tickets exceed available tickets",
+			})
+			return
+		}
+
+		tx, err := db.Begin()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to start transaction",
+				"message": err.Error(),
+			})
+			return
+		}
+		defer tx.Rollback()
+
+		_, err = tx.Exec(`INSERT INTO bookings (user_id, event_id, tickets_booked) VALUES ($1, $2, $3)`, userID, req.EventID, req.TicketsBooked)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to book tickets",
+				"message": err.Error(),
+			})
+			return
+		}
+
+		_, err = tx.Exec(`UPDATE events SET available_tickets = available_tickets - $1 WHERE id = $2`, req.TicketsBooked, req.EventID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to update available tickets",
+				"message": err.Error(),
+			})
+			return
+		}
+		if err := tx.Commit(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to commit transaction",
+				"message": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Tickets booked successfully",
 		})
 	}
 }

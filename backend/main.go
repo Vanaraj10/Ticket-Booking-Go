@@ -18,6 +18,7 @@ func main() {
 		log.Fatal("Failed to connect to database:", err)
 	}
 	defer db.Close()
+
 	fmt.Println("Connected to the database successfully")
 
 	r := gin.Default()
@@ -36,6 +37,10 @@ func main() {
 	admin := r.Group("/api/admin")
 	admin.Use(middleware.JWTAuthMiddleware(), middleware.AdminOnly())
 	admin.POST("/events", handlers.CreateEventHandler(db))
-	
-	r.Run(":8080") // listen and serve on
+
+	user := r.Group("/api/user")
+	user.Use(middleware.JWTAuthMiddleware())
+	user.POST("/book", handlers.BookEventHandler(db))
+
+	r.Run(":8080")
 }
