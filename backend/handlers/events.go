@@ -43,3 +43,43 @@ func CreateEventHandler(db *sql.DB) gin.HandlerFunc {
 		})
 	}
 }
+
+func ListEventHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		rows, err := db.Query(`SELECT id, name, description, total_tickets, available_tickets, event_date, created_by FROM events ORDER BY event_date DESC`)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to retrieve events",
+				"message": err.Error(),
+			})
+			return
+		}
+		defer rows.Close()
+
+		events := []map[string]interface{}{}
+		for rows.Next() {
+			var id, TotalTickets, AvailableTickets, CreatedBy int
+			var Name, Description string
+			var EventDate time.Time
+			if err := rows.Scan(&id, &Name, &Description, &TotalTickets, &AvailableTickets, &EventDate, &CreatedBy); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error":   "Failed to scan event data",
+					"message": err.Error(),
+				})
+				return
+			}
+			events = append(events, map[string]interface{}{
+				"id":id,
+				"name": Name,
+				"description":Description,
+				"total_tickets": TotalTickets,
+				"available_tickets": AvailableTickets,
+				"event_date": EventDate,
+				"created_by": CreatedBy,
+			})
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"events": events,
+		})
+	}
+}

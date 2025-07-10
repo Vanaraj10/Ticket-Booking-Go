@@ -28,6 +28,8 @@ func main() {
 		})
 	})
 
+	r.GET("/events", handlers.ListEventHandler(db))
+
 	r.POST("/signup", handlers.UserSignupHandler(db))
 	r.POST("/login", handlers.UserLoginHandler(db))
 
