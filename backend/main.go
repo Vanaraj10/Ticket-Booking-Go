@@ -52,6 +52,7 @@ func main() {
 	user.Use(middleware.JWTAuthMiddleware())
 	user.POST("/book", handlers.BookEventHandler(db))
 	user.GET("/bookings",handlers.ListUserBookingsHandler(db))
+	user.DELETE("/bookings/:booking_id",handlers.CancelBookingHandler(db))
 
 	r.Run(":8080")
 }

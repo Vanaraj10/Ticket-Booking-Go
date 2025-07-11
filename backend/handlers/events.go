@@ -268,3 +268,68 @@ func DeleteEventHandler(db *sql.DB) gin.HandlerFunc {
 		})
 	}
 }
+
+func CancelBookingHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		bookingID := c.Param("booking_id")
+		userID := c.GetInt("user_id")
+
+		var eventDate time.Time
+		var ticketsBooked, eventID int
+		err := db.QueryRow(`SELECT b.tickets_booked, b.event_id, e.event_date
+							FROM bookings b
+							JOIN events e ON b.event_id = e.id
+							WHERE b.id = $1 AND b.user_id = $2`,bookingID, userID).Scan(&ticketsBooked, &eventID, &eventDate)
+
+	    if err != nil {
+			c.JSON(http.StatusNotFound,gin.H{
+				"error":   "Booking not found",
+				"message": "No booking found with the given ID for the user",
+			})
+			return
+		}
+		if time.Now().After(eventDate) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Cannot cancel booking",
+				"message": "Booking cannot be cancelled after the event date",
+			})
+			return
+		}
+		tx, err := db.Begin()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to start transaction",
+				"message": err.Error(),
+			})
+			return
+		}
+		defer tx.Rollback()
+
+		_,err = tx.Exec(`DELETE FROM bookings WHERE id = $1 AND user_id = $2`, bookingID, userID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to cancel booking",
+				"message": err.Error(),
+			})
+			return
+		}
+		_, err = tx.Exec(`UPDATE events SET available_tickets = available_tickets + $1 WHERE id = $2`,ticketsBooked, eventID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to update available tickets",
+				"message": err.Error(),
+			})
+			return
+		}
+		if err := tx.Commit(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to commit transaction",
+				"message": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Booking cancelled successfully",
+		})
+	}
+}

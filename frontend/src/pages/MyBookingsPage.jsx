@@ -28,6 +28,36 @@ export default function MyBookingsPage() {
         setLoading(false);
       });
   }, []);
+
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm("Are you sure you want to cancel this booking?"))
+      return;
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/user/bookings/${bookingId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setBookings((prev) => prev.filter((b) => b.id !== bookingId));
+        setError("");
+      } else {
+        alert(
+          data.error || "Failed to cancel booking. Please try again later."
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      setError("Failed to cancel booking. Please try again later.");
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -141,9 +171,24 @@ export default function MyBookingsPage() {
                   width: "100%",
                 }}
               >
-                Date:{" "}
-                {new Date(booking.event_date).toLocaleString()}
+                Date: {new Date(booking.event_date).toLocaleString()}
               </span>
+              <button
+                style={{
+                  marginTop: 8,
+                  padding: "8px 16px",
+                  borderRadius: 8,
+                  border: "none",
+                  background: "#ff5252",
+                  color: "#fff",
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                }}
+                onClick={() => handleDeleteBooking(booking.id)}
+              >
+                Cancel Booking
+              </button>
             </li>
           ))}
         </ul>
