@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import "./HomePage.css"; // Assuming you have a CSS file for styling
-import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const [events, setEvents] = useState([]);
@@ -69,26 +67,110 @@ export default function HomePage() {
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div>
-      <h2>Events</h2>
+    <div
+      style={{
+        maxWidth: 900,
+        margin: "2rem auto",
+        padding: "2rem",
+        background: "#23272f",
+        borderRadius: 12,
+        color: "#fff",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+      }}
+    >
+      <h2
+        style={{
+          color: "#4caf50",
+          textAlign: "center",
+          marginBottom: "1.5rem",
+        }}
+      >
+        Events
+      </h2>
       {events.length === 0 && <p>No Events Found</p>}
-      <ul>
+      <ul
+        style={{
+          listStyle: "none",
+          padding: 0,
+          maxWidth: 700,
+          margin: "2rem auto",
+        }}
+      >
         {events.map((event) => (
-          <li key={event.id} className="event-item">
-            <strong>{event.name}</strong>
+          <li
+            key={event.id}
+            style={{
+              background: "#23272f",
+              border: "1px solid #333",
+              borderRadius: 12,
+              marginBottom: "1.5rem",
+              padding: "1.5rem 2rem",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              transition: "box-shadow 0.2s, border 0.2s",
+            }}
+          >
+            <strong
+              style={{
+                fontSize: "1.3rem",
+                color: "#4caf50",
+                letterSpacing: "0.5px",
+              }}
+            >
+              {event.name}
+            </strong>
             <br />
             {event.description}
             <br />
-            <span>Available Tickets :{event.available_tickets}</span>
-            <span>Date: {new Date(event.event_date).toLocaleString()}</span>
+            <span
+              style={{
+                display: "block",
+                marginTop: "0.5rem",
+                color: "#bdbdbd",
+                fontSize: "0.98rem",
+              }}
+            >
+              Available Tickets :{event.available_tickets}
+            </span>
+            <span
+              style={{
+                display: "block",
+                marginTop: "0.5rem",
+                color: "#bdbdbd",
+                fontSize: "0.98rem",
+              }}
+            >
+              Date: {new Date(event.event_date).toLocaleString()}
+            </span>
             <button
-              className="book-button"
+              style={{
+                marginTop: 10,
+                padding: "8px 18px",
+                borderRadius: 8,
+                border: "none",
+                background: "#1976d2",
+                color: "#fff",
+                fontWeight: 500,
+                cursor: "pointer",
+                transition: "background 0.2s",
+              }}
               onClick={() => handleBookClick(event.id)}
             >
               Book Tickets
             </button>
             {bookingEventId === event.id && (
-              <form onSubmit={handleBooking}>
+              <form
+                onSubmit={handleBooking}
+                style={{
+                  marginTop: 12,
+                  background: "#23272f",
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
                 <input
                   type="number"
                   min={1}
@@ -96,10 +178,59 @@ export default function HomePage() {
                   value={tickets}
                   onChange={(e) => setTickets(e.target.value)}
                   required
+                  style={{
+                    width: 70,
+                    padding: 6,
+                    borderRadius: 5,
+                    border: "1px solid #555",
+                    background: "#181818",
+                    color: "#fff",
+                  }}
                 />
-                <button type="submit">Confirm</button>
-                <button onClick={() => setBookingEventId(null)}>Cancel</button>
-                {bookingMessage && <div color="white">{bookingMessage}</div>}
+                <button
+                  type="submit"
+                  style={{
+                    background: "#4caf50",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: "7px 16px",
+                    cursor: "pointer",
+                    fontWeight: 500,
+                    transition: "background 0.2s",
+                  }}
+                >
+                  Confirm
+                </button>
+                <button
+                  type="button"
+                  style={{
+                    background: "#888",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: "7px 16px",
+                    cursor: "pointer",
+                    fontWeight: 500,
+                    transition: "background 0.2s",
+                  }}
+                  onClick={() => setBookingEventId(null)}
+                >
+                  Cancel
+                </button>
+                {bookingMessage && (
+                  <div
+                    style={{
+                      marginTop: 8,
+                      color: "#ffd600",
+                      fontSize: "1rem",
+                      fontWeight: 500,
+                      letterSpacing: "0.2px",
+                    }}
+                  >
+                    {bookingMessage}
+                  </div>
+                )}
               </form>
             )}
           </li>

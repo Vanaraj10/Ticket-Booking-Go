@@ -100,6 +100,7 @@ func UserLoginHandler(db *sql.DB) gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"token":token,
+			"role":role,
 			"message": "Login successful",
 		})
 	}

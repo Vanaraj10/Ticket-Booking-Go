@@ -32,18 +32,97 @@ export default function MyBookingsPage() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
-      <h2>My Bookings</h2>
-      {bookings.length === 0 && <div>No bookings found.</div>}
-      <ul>
-        {bookings.map((b) => (
-          <li key={b.id} className="event-item">
-            <strong>{b.event_name}</strong>
-            <span>Tickets Booked: {b.tickets_booked}</span>
-            <span>Booked At: {new Date(b.booked_at).toLocaleString()}</span>
-          </li>
-        ))}
-      </ul>
+    <div
+      style={{
+        maxWidth: 900,
+        margin: "2rem auto",
+        padding: "2rem",
+        background: "#23272f",
+        borderRadius: 12,
+        color: "#fff",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+      }}
+    >
+      <h2
+        style={{
+          color: "#4caf50",
+          textAlign: "center",
+          marginBottom: "1.5rem",
+        }}
+      >
+        My Bookings
+      </h2>
+      {loading ? (
+        <div>Loading Bookings...</div>
+      ) : error ? (
+        <div
+          style={{
+            color: "#ff5252",
+            marginTop: 16,
+            textAlign: "center",
+          }}
+        >
+          {error}
+        </div>
+      ) : bookings.length === 0 ? (
+        <p>No Bookings Found</p>
+      ) : (
+        <ul
+          style={{
+            listStyle: "none",
+            padding: 0,
+            maxWidth: 700,
+            margin: "2rem auto",
+          }}
+        >
+          {bookings.map((booking) => (
+            <li
+              key={booking.id}
+              style={{
+                background: "#23272f",
+                border: "1px solid #333",
+                borderRadius: 12,
+                marginBottom: "1.5rem",
+                padding: "1.5rem 2rem",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                transition: "box-shadow 0.2s, border 0.2s",
+              }}
+            >
+              <strong
+                style={{
+                  fontSize: "1.3rem",
+                  color: "#4caf50",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                {booking.event_name}
+              </strong>
+              <br />
+              <span
+                style={{
+                  display: "block",
+                  marginTop: "0.5rem",
+                  color: "#bdbdbd",
+                  fontSize: "0.98rem",
+                }}
+              >
+                Tickets Booked: {booking.tickets_booked}
+              </span>
+              <span
+                style={{
+                  display: "block",
+                  marginTop: "0.5rem",
+                  color: "#bdbdbd",
+                  fontSize: "0.98rem",
+                }}
+              >
+                Date:{" "}
+                {new Date(booking.booking_date).toLocaleString()}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

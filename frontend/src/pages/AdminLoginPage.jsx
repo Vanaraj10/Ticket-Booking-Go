@@ -1,32 +1,39 @@
-import { useState } from "react";
-export default function SignupPage() {
+import { useState} from "react";
+import { useNavigate } from "react-router-dom";
+
+export default function AdminLoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  const HandleSubmit = async (e) => {
-    console.log("Signing up with:", { username, password });
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     try {
-      const res = await fetch("http://localhost:8080/signup", {
+      const res = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({
+          username,
+          password,
+        }),
       });
       const data = await res.json();
-      if (res.ok) {
-        setMessage("Successfully signed up!");
-        setUsername("");
-        setPassword("");
+      if (res.ok && data.role == "admin") {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+        setMessage("Login successful! Redirecting to admin dashboard...");
+        setTimeout(() => {
+          navigate("/admin");
+        }, 1000);
       } else {
-        setMessage(data.error || "Something went wrong!");
+        setMessage(data.error || "Login failed. Please try again.");
       }
-    } catch (error) {
-      console.error("Error during signup:", error);
-      setMessage("An error occurred. Please try again.");
+    } catch {
+      setMessage("An error occurred while logging in. Please try again.");
     }
   };
 
@@ -42,19 +49,11 @@ export default function SignupPage() {
         boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
       }}
     >
-      <h2
-        style={{
-          color: "#4caf50",
-          textAlign: "center",
-          marginBottom: "1.5rem",
-        }}
-      >
-        Sign Up
-      </h2>
-      <form onSubmit={HandleSubmit}>
+      <h2 style={{ color: "#4caf50", textAlign: "center", marginBottom: "1.5rem" }}>Admin Login</h2>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Username"
+          placeholder="Admin User"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
@@ -99,16 +98,13 @@ export default function SignupPage() {
             transition: "background 0.2s",
           }}
         >
-          Sign Up
+          Login
         </button>
       </form>
       {message && (
         <p
-          style={{
-            color: "#ff5252",
-            marginTop: 16,
-            textAlign: "center",
-          }}
+          className="error-message"
+          style={{ color: "#ff5252", marginTop: 16, textAlign: "center" }}
         >
           {message}
         </p>

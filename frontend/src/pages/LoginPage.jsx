@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./SignupPage.css";
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -39,30 +38,88 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="signup-container">
-      <h2>Login</h2>
+    <div
+      style={{
+        maxWidth: 400,
+        margin: "2rem auto",
+        padding: 20,
+        background: "#23272f",
+        borderRadius: 12,
+        color: "#fff",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+      }}
+    >
+      <h2
+        style={{
+          color: "#4caf50",
+          textAlign: "center",
+          marginBottom: "1.5rem",
+        }}
+      >
+        Login
+      </h2>
       <form onSubmit={handleSubmit}>
         <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
-        className="input-field"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        className="input-field"
-      />
-      <button type="submit" className="submit-btn">
-        Login
-      </button>
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          style={{
+            width: "100%",
+            padding: 10,
+            margin: "10px 0",
+            borderRadius: 5,
+            border: "1px solid #555",
+            background: "#181818",
+            color: "#fff",
+          }}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{
+            width: "100%",
+            padding: 10,
+            margin: "10px 0",
+            borderRadius: 5,
+            border: "1px solid #555",
+            background: "#181818",
+            color: "#fff",
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            width: "100%",
+            padding: 10,
+            borderRadius: 12,
+            background: "#4CAF50",
+            color: "#fff",
+            border: "none",
+            fontWeight: 600,
+            marginTop: 10,
+            cursor: "pointer",
+            transition: "background 0.2s",
+          }}
+        >
+          Login
+        </button>
       </form>
-      {message && <p className="message">{message}</p>}
+      {message && (
+        <p
+          style={{
+            color: "#ff5252",
+            marginTop: 16,
+            textAlign: "center",
+          }}
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }
