@@ -203,9 +203,10 @@ func ListEventBookingsHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		eventID := c.Param("event_id")
 
-		rows, err := db.Query(`SELECT b.id, u.username, b.tickets_booked, b.booked_at
+		rows, err := db.Query(`SELECT b.id, u.username, b.tickets_booked, b.booked_at, e.name
 							   FROM bookings b
 							   JOIN users u ON b.user_id=u.id
+							   JOIN events e ON b.event_id = e.id
 							   WHERE b.event_id = $1
 							   ORDER BY b.booked_at DESC
 							   `, eventID)
@@ -221,9 +222,9 @@ func ListEventBookingsHandler(db *sql.DB) gin.HandlerFunc {
 		bookings := []map[string]interface{}{}
 		for rows.Next() {
 			var id, tickets_booked int
-			var username string
+			var username,eventName string
 			var bookedAt time.Time
-			if err := rows.Scan(&id, &username, &tickets_booked, &bookedAt); err != nil {
+			if err := rows.Scan(&id, &username, &tickets_booked, &bookedAt,&eventName); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"error":   "Failed to scan booking data",
 					"message": err.Error(),
@@ -231,6 +232,7 @@ func ListEventBookingsHandler(db *sql.DB) gin.HandlerFunc {
 			}
 			bookings = append(bookings, map[string]interface{}{
 				"id":             id,
+				"event_name":     eventName, // Assuming eventID is the name of the event
 				"username":       username,
 				"tickets_booked": tickets_booked,
 				"booked_at":      bookedAt,

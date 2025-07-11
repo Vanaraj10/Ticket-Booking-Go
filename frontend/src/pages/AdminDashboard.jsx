@@ -1,11 +1,60 @@
 import { useEffect, useState } from "react";
-import { Form } from "react-router-dom";
 
 export default function AdminDashboard() {
   const [view, setView] = useState("events");
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedEventBookings, setSelectedEventBookings] = useState([]);  const [showBookingsForEventId, setShowBookingsForEventId] = useState(null);
+
+  const handleDeleteEvent = (eventId) => async () => {
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
+    try {
+      const token = localStorage.getItem("token"); // Get fresh token
+      const res = await fetch(
+        `http://localhost:8080/api/admin/events/${eventId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      console.log("Delete Event Response:", data);
+      if (res.ok) {
+        setEvents(events.filter((e) => e.id !== eventId));
+        alert("Event deleted successfully!");
+      } else {
+        if (data.error && data.error.includes("violates foreign key constraint")) {
+          alert("Cannot delete event: there are bookings for this event.");
+        } else {
+          alert("Failed to delete event. Please try again.");
+        }
+      }
+    } catch {
+      alert("Failed to delete event. Please try again later.");
+    }
+  };  const handleShowBookings = async (eventId) => {
+    setShowBookingsForEventId(eventId);
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token"); // Get fresh token
+      const res = await fetch(
+        `http://localhost:8080/api/admin/events/${eventId}/bookings`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      console.log("Bookings Response:", data.bookings);
+      setSelectedEventBookings(data.bookings || []);
+      setLoading(false);
+    } catch {
+      alert("Failed to load bookings. Please try again.");
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (view === "events") {
@@ -140,26 +189,60 @@ export default function AdminDashboard() {
                   </span>
                   <span style={{ color: "#bdbdbd" }}>
                     Date: {new Date(event.event_date).toLocaleString()}
-                  </span>
+                  </span>                  <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+                    <button 
+                      onClick={handleDeleteEvent(event.id)}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 8,
+                        border: "none",
+                        background: "#ff5252",
+                        color: "#fff",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        fontSize: "1rem",
+                        flex: 1,
+                        minWidth: 120,
+                      }}
+                    >
+                      Delete Event
+                    </button>
+                    <button 
+                      onClick={() => handleShowBookings(event.id)}
+                      style={{
+                        padding: "8px 16px",
+                        borderRadius: 8,
+                        border: "none",
+                        background: "#1976d2",
+                        color: "#fff",
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        fontSize: "1rem",
+                        flex: 1,
+                        minWidth: 120,
+                      }}
+                    >
+                      View Bookings
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
           )}
         </div>
-      )}
-      {view === "create" && (
+      )}      {view === "create" && (
         <form
           onSubmit={async (e) => {
             e.preventDefault();
             setError("");
             setLoading(true);
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token"); // Get fresh token
             const formData = new FormData(e.target);
             const body = {
               name: formData.get("name"),
               description: formData.get("description"),
               total_tickets: Number(formData.get("total_tickets")),
-              event_date: new  Date(formData.get("event_date")).toISOString(),
+              event_date: new Date(formData.get("event_date")).toISOString(),
             };
             try {
               const res = await fetch(
@@ -178,6 +261,8 @@ export default function AdminDashboard() {
               if (res.ok) {
                 setView("events");
                 setLoading(false);
+                // Refresh events list
+                window.location.reload();
               } else {
                 setError(
                   data.error || "Failed to create event. Please try again."
@@ -186,7 +271,21 @@ export default function AdminDashboard() {
               }
             } catch {
               setError("Failed to create event. Please try again later.");
+              setLoading(false);
             }
+          }}
+          style={{
+            background: "#23272f",
+            padding: "1.5rem",
+            borderRadius: 12,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            maxWidth: 400,
+            margin: "0 auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: 16,
+            width: "100%",
+            boxSizing: "border-box"
           }}
         >
           <h3 style={{ color: "#4caf50", textAlign: "center" }}>
@@ -261,8 +360,85 @@ export default function AdminDashboard() {
             <div style={{ color: "#ff5252", marginTop: 8 }}>{error}</div>
           )}
         </form>
+      )}      {showBookingsForEventId && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+          onClick={() => setShowBookingsForEventId(null)}
+        >
+          <div
+            style={{
+              background: "#23272f",
+              borderRadius: 12,
+              padding: "2rem",
+              maxWidth: 500,
+              width: "90vw",
+              maxHeight: "80vh",
+              overflowY: "auto",
+              color: "#fff",
+              boxShadow: "0 2px 16px rgba(0,0,0,0.25)",
+              position: "relative",
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 style={{ color: "#ffd600", textAlign: "center", marginBottom: "1rem" }}>
+              Bookings for Event {selectedEventBookings[0]?.event_name}
+            </h3>
+            {loading ? (
+              <div style={{ textAlign: "center", padding: "2rem" }}>Loading bookings...</div>
+            ) : selectedEventBookings.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "2rem", color: "#bdbdbd" }}>No bookings found.</div>
+            ) : (
+              <ul style={{ listStyle: "none", padding: 0, maxHeight: "400px", overflowY: "auto" }}>
+                {selectedEventBookings.map((booking) => (
+                  <li
+                    key={booking.id}
+                    style={{
+                      background: "#181818",
+                      border: "1px solid #555",
+                      borderRadius: 8,
+                      marginBottom: "1rem",
+                      padding: "1rem",
+                      color: "#fff",
+                    }}
+                  >
+                    <strong>User Name:</strong> {booking.username} <br />
+                    <strong>Tickets Booked:</strong> {booking.tickets_booked} <br />
+                    <strong>Booked At:</strong> {new Date(booking.booked_at).toLocaleString()}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button
+              style={{
+                marginTop: 20,
+                padding: "10px 20px",
+                borderRadius: 8,
+                border: "none",
+                background: "#888",
+                color: "#fff",
+                fontWeight: 500,
+                cursor: "pointer",
+                fontSize: "1rem",
+                width: "100%",
+              }}
+              onClick={() => setShowBookingsForEventId(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
-      {view === "bookings" && <div>Booking List</div>}
     </div>
   );
 }
