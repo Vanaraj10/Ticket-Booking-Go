@@ -76,6 +76,12 @@ export default function HomePage() {
         borderRadius: 12,
         color: "#fff",
         boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+        width: "95%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        boxSizing: "border-box",
       }}
     >
       <h2
@@ -83,17 +89,34 @@ export default function HomePage() {
           color: "#4caf50",
           textAlign: "center",
           marginBottom: "1.5rem",
+          fontSize: "2rem",
+          letterSpacing: "1px",
+          width: "100%",
+          wordBreak: "break-word",
         }}
       >
         Events
       </h2>
-      {events.length === 0 && <p>No Events Found</p>}
+      {events.length === 0 && (
+        <p
+          style={{
+            fontSize: "1.1rem",
+            color: "#bdbdbd",
+            textAlign: "center",
+            width: "100%",
+          }}
+        >
+          No Events Found
+        </p>
+      )}
       <ul
         style={{
           listStyle: "none",
           padding: 0,
           maxWidth: 700,
           margin: "2rem auto",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {events.map((event) => (
@@ -104,9 +127,14 @@ export default function HomePage() {
               border: "1px solid #333",
               borderRadius: 12,
               marginBottom: "1.5rem",
-              padding: "1.5rem 2rem",
+              padding: "1.5rem 1rem",
               boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
               transition: "box-shadow 0.2s, border 0.2s",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+              width: "100%",
+              boxSizing: "border-box",
             }}
           >
             <strong
@@ -114,19 +142,29 @@ export default function HomePage() {
                 fontSize: "1.3rem",
                 color: "#4caf50",
                 letterSpacing: "0.5px",
+                wordBreak: "break-word",
+                width: "100%",
               }}
             >
               {event.name}
             </strong>
-            <br />
-            {event.description}
-            <br />
+            <span
+              style={{
+                color: "#bdbdbd",
+                fontSize: "1rem",
+                wordBreak: "break-word",
+                width: "100%",
+              }}
+            >
+              {event.description}
+            </span>
             <span
               style={{
                 display: "block",
                 marginTop: "0.5rem",
                 color: "#bdbdbd",
                 fontSize: "0.98rem",
+                width: "100%",
               }}
             >
               Available Tickets :{event.available_tickets}
@@ -137,6 +175,7 @@ export default function HomePage() {
                 marginTop: "0.5rem",
                 color: "#bdbdbd",
                 fontSize: "0.98rem",
+                width: "100%",
               }}
             >
               Date: {new Date(event.event_date).toLocaleString()}
@@ -144,7 +183,7 @@ export default function HomePage() {
             <button
               style={{
                 marginTop: 10,
-                padding: "8px 18px",
+                padding: "10px 18px",
                 borderRadius: 8,
                 border: "none",
                 background: "#1976d2",
@@ -152,6 +191,10 @@ export default function HomePage() {
                 fontWeight: 500,
                 cursor: "pointer",
                 transition: "background 0.2s",
+                fontSize: "1rem",
+                width: "100%",
+                maxWidth: "220px",
+                alignSelf: "center",
               }}
               onClick={() => handleBookClick(event.id)}
             >
@@ -163,12 +206,15 @@ export default function HomePage() {
                 style={{
                   marginTop: 12,
                   background: "#23272f",
-                  padding: "12px 16px",
+                  padding: "12px 8px",
                   borderRadius: 8,
                   boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
                   gap: 10,
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               >
                 <input
@@ -179,45 +225,66 @@ export default function HomePage() {
                   onChange={(e) => setTickets(e.target.value)}
                   required
                   style={{
-                    width: 70,
-                    padding: 6,
+                    width: "100%",
+                    maxWidth: 90,
+                    padding: 8,
                     borderRadius: 5,
                     border: "1px solid #555",
                     background: "#181818",
                     color: "#fff",
+                    fontSize: "1rem",
+                    boxSizing: "border-box",
                   }}
                 />
-                <button
-                  type="submit"
+                <div
                   style={{
-                    background: "#4caf50",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 8,
-                    padding: "7px 16px",
-                    cursor: "pointer",
-                    fontWeight: 500,
-                    transition: "background 0.2s",
+                    display: "flex",
+                    gap: 8,
+                    width: "100%",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
                   }}
                 >
-                  Confirm
-                </button>
-                <button
-                  type="button"
-                  style={{
-                    background: "#888",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 8,
-                    padding: "7px 16px",
-                    cursor: "pointer",
-                    fontWeight: 500,
-                    transition: "background 0.2s",
-                  }}
-                  onClick={() => setBookingEventId(null)}
-                >
-                  Cancel
-                </button>
+                  <button
+                    type="submit"
+                    style={{
+                      background: "#4caf50",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 8,
+                      padding: "7px 16px",
+                      cursor: "pointer",
+                      fontWeight: 500,
+                      transition: "background 0.2s",
+                      fontSize: "1rem",
+                      width: "100%",
+                      maxWidth: 120,
+                      marginBottom: 8,
+                    }}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    type="button"
+                    style={{
+                      background: "#888",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 8,
+                      padding: "7px 16px",
+                      cursor: "pointer",
+                      fontWeight: 500,
+                      transition: "background 0.2s",
+                      fontSize: "1rem",
+                      width: "100%",
+                      maxWidth: 120,
+                      marginBottom: 8,
+                    }}
+                    onClick={() => setBookingEventId(null)}
+                  >
+                    Cancel
+                  </button>
+                </div>
                 {bookingMessage && (
                   <div
                     style={{
@@ -226,6 +293,8 @@ export default function HomePage() {
                       fontSize: "1rem",
                       fontWeight: 500,
                       letterSpacing: "0.2px",
+                      textAlign: "center",
+                      width: "100%",
                     }}
                   >
                     {bookingMessage}

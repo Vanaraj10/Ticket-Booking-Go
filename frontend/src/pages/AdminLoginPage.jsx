@@ -47,10 +47,12 @@ export default function AdminLoginPage() {
         borderRadius: 12,
         color: "#fff",
         boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+        width: "95%",
+        boxSizing: "border-box"
       }}
     >
-      <h2 style={{ color: "#4caf50", textAlign: "center", marginBottom: "1.5rem" }}>Admin Login</h2>
-      <form onSubmit={handleSubmit}>
+      <h2 style={{ color: "#4caf50", textAlign: "center", marginBottom: "1.5rem", fontSize: "2rem", letterSpacing: "1px" }}>Admin Login</h2>
+      <form onSubmit={handleSubmit} style={{width: "100%"}}>
         <input
           type="text"
           placeholder="Admin User"
@@ -65,6 +67,8 @@ export default function AdminLoginPage() {
             border: "1px solid #555",
             background: "#181818",
             color: "#fff",
+            fontSize: "1rem",
+            boxSizing: "border-box"
           }}
         />
         <input
@@ -81,6 +85,8 @@ export default function AdminLoginPage() {
             border: "1px solid #555",
             background: "#181818",
             color: "#fff",
+            fontSize: "1rem",
+            boxSizing: "border-box"
           }}
         />
         <button
@@ -96,18 +102,14 @@ export default function AdminLoginPage() {
             marginTop: 10,
             cursor: "pointer",
             transition: "background 0.2s",
+            fontSize: "1rem"
           }}
         >
           Login
         </button>
       </form>
       {message && (
-        <p
-          className="error-message"
-          style={{ color: "#ff5252", marginTop: 16, textAlign: "center" }}
-        >
-          {message}
-        </p>
+        <p style={{ color: "#ff5252", marginTop: 16, textAlign: "center", fontSize: "1rem" }}>{message}</p>
       )}
     </div>
   );

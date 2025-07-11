@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link} from "react-router-dom";
+
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -47,18 +48,12 @@ export default function LoginPage() {
         borderRadius: 12,
         color: "#fff",
         boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+        width: "95%",
+        boxSizing: "border-box"
       }}
     >
-      <h2
-        style={{
-          color: "#4caf50",
-          textAlign: "center",
-          marginBottom: "1.5rem",
-        }}
-      >
-        Login
-      </h2>
-      <form onSubmit={handleSubmit}>
+      <h2 style={{ color: "#4caf50", textAlign: "center", marginBottom: "1.5rem", fontSize: "2rem", letterSpacing: "1px" }}>Login</h2>
+      <form onSubmit={handleSubmit} style={{width: "100%"}}>
         <input
           type="text"
           placeholder="Username"
@@ -73,6 +68,8 @@ export default function LoginPage() {
             border: "1px solid #555",
             background: "#181818",
             color: "#fff",
+            fontSize: "1rem",
+            boxSizing: "border-box"
           }}
         />
         <input
@@ -89,6 +86,8 @@ export default function LoginPage() {
             border: "1px solid #555",
             background: "#181818",
             color: "#fff",
+            fontSize: "1rem",
+            boxSizing: "border-box"
           }}
         />
         <button
@@ -104,22 +103,17 @@ export default function LoginPage() {
             marginTop: 10,
             cursor: "pointer",
             transition: "background 0.2s",
+            fontSize: "1rem"
           }}
         >
           Login
         </button>
       </form>
       {message && (
-        <p
-          style={{
-            color: "#ff5252",
-            marginTop: 16,
-            textAlign: "center",
-          }}
-        >
-          {message}
-        </p>
+        <p style={{ color: "#ff5252", marginTop: 16, textAlign: "center", fontSize: "1rem" }}>{message}</p>
       )}
+      <Link to="/admin-login" style={{color:"white" ,display: "block", textAlign: "center", marginTop: "1rem"
+      }}>Admin Login</Link>
     </div>
   );
 }

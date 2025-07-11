@@ -40,6 +40,8 @@ export default function SignupPage() {
         borderRadius: 12,
         color: "#fff",
         boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+        width: "95%",
+        boxSizing: "border-box",
       }}
     >
       <h2
@@ -47,11 +49,13 @@ export default function SignupPage() {
           color: "#4caf50",
           textAlign: "center",
           marginBottom: "1.5rem",
+          fontSize: "2rem",
+          letterSpacing: "1px",
         }}
       >
         Sign Up
       </h2>
-      <form onSubmit={HandleSubmit}>
+      <form onSubmit={HandleSubmit} style={{ width: "100%" }}>
         <input
           type="text"
           placeholder="Username"
@@ -66,6 +70,8 @@ export default function SignupPage() {
             border: "1px solid #555",
             background: "#181818",
             color: "#fff",
+            fontSize: "1rem",
+            boxSizing: "border-box",
           }}
         />
         <input
@@ -82,6 +88,8 @@ export default function SignupPage() {
             border: "1px solid #555",
             background: "#181818",
             color: "#fff",
+            fontSize: "1rem",
+            boxSizing: "border-box",
           }}
         />
         <button
@@ -97,6 +105,7 @@ export default function SignupPage() {
             marginTop: 10,
             cursor: "pointer",
             transition: "background 0.2s",
+            fontSize: "1rem",
           }}
         >
           Sign Up
@@ -108,6 +117,7 @@ export default function SignupPage() {
             color: "#ff5252",
             marginTop: 16,
             textAlign: "center",
+            fontSize: "1rem",
           }}
         >
           {message}

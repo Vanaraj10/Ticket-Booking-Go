@@ -41,6 +41,12 @@ export default function MyBookingsPage() {
         borderRadius: 12,
         color: "#fff",
         boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+        width: "95%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        boxSizing: "border-box",
       }}
     >
       <h2
@@ -48,6 +54,9 @@ export default function MyBookingsPage() {
           color: "#4caf50",
           textAlign: "center",
           marginBottom: "1.5rem",
+          fontSize: "2rem",
+          letterSpacing: "1px",
+          width: "100%",
         }}
       >
         My Bookings
@@ -60,12 +69,22 @@ export default function MyBookingsPage() {
             color: "#ff5252",
             marginTop: 16,
             textAlign: "center",
+            fontSize: "1rem",
           }}
         >
           {error}
         </div>
       ) : bookings.length === 0 ? (
-        <p>No Bookings Found</p>
+        <p
+          style={{
+            fontSize: "1.1rem",
+            color: "#bdbdbd",
+            textAlign: "center",
+            width: "100%",
+          }}
+        >
+          No Bookings Found
+        </p>
       ) : (
         <ul
           style={{
@@ -73,6 +92,8 @@ export default function MyBookingsPage() {
             padding: 0,
             maxWidth: 700,
             margin: "2rem auto",
+            width: "100%",
+            boxSizing: "border-box",
           }}
         >
           {bookings.map((booking) => (
@@ -86,6 +107,8 @@ export default function MyBookingsPage() {
                 padding: "1.5rem 2rem",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                 transition: "box-shadow 0.2s, border 0.2s",
+                width: "100%",
+                boxSizing: "border-box",
               }}
             >
               <strong
@@ -93,17 +116,18 @@ export default function MyBookingsPage() {
                   fontSize: "1.3rem",
                   color: "#4caf50",
                   letterSpacing: "0.5px",
+                  width: "100%",
                 }}
               >
                 {booking.event_name}
               </strong>
-              <br />
               <span
                 style={{
                   display: "block",
                   marginTop: "0.5rem",
                   color: "#bdbdbd",
                   fontSize: "0.98rem",
+                  width: "100%",
                 }}
               >
                 Tickets Booked: {booking.tickets_booked}
@@ -114,6 +138,7 @@ export default function MyBookingsPage() {
                   marginTop: "0.5rem",
                   color: "#bdbdbd",
                   fontSize: "0.98rem",
+                  width: "100%",
                 }}
               >
                 Date:{" "}
