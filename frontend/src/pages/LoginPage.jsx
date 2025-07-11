@@ -28,7 +28,11 @@ export default function LoginPage() {
         setUsername("");
         setPassword("");
         setTimeout(() => {
-          navigate("/");
+          if(data.role === "admin"){
+            navigate("/admin");
+          }else{
+            navigate("/");
+          }
         }, 1000);
       } else {
         setMessage(data.error || "Something went wrong!");

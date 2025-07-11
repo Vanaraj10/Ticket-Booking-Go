@@ -16,6 +16,7 @@ export default function NavBar() {
       <div>
         <Link to="/" style={{ color: "#4caf50", fontWeight: 700, marginRight: 24, textDecoration: "none" }}>Home</Link>
        {token && <Link to="/my-bookings" style={{ color: "#4caf50", fontWeight: 700, marginRight: 24, textDecoration: "none" }}>My Bookings</Link>}
+       {localStorage.getItem('role')==='admin' && <Link to="/admin" style={{ color: "#4caf50", fontWeight: 700, marginRight: 24, textDecoration: "none" }}>AdminDashboard</Link>}
       </div>
       <div>
         {token ? (

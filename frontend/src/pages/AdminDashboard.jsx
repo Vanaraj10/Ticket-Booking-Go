@@ -140,22 +140,6 @@ export default function AdminDashboard() {
         >
           Create Events
         </button>
-        <button
-          style={{
-            padding: "10px 18px",
-            borderRadius: 8,
-            border: "none",
-            background: view === "bookings" ? "#4caf50" : "#1976d2",
-            color: "#fff",
-            fontWeight: 500,
-            cursor: "pointer",
-            fontSize: "1rem",
-            minWidth: 120,
-          }}
-          onClick={() => setView("bookings")}
-        >
-          View Bookings
-        </button>
       </nav>
       {view === "events" && (
         <div>
