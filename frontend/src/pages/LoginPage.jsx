@@ -23,6 +23,7 @@ export default function LoginPage() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
         console.log("Login successful:", data);
         setMessage("Login successful!");
         setUsername("");
@@ -116,8 +117,6 @@ export default function LoginPage() {
       {message && (
         <p style={{ color: "#ff5252", marginTop: 16, textAlign: "center", fontSize: "1rem" }}>{message}</p>
       )}
-      <Link to="/admin-login" style={{color:"white" ,display: "block", textAlign: "center", marginTop: "1rem"
-      }}>Admin Login</Link>
     </div>
   );
 }

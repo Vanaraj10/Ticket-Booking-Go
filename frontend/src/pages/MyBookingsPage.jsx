@@ -142,7 +142,7 @@ export default function MyBookingsPage() {
                 }}
               >
                 Date:{" "}
-                {new Date(booking.booking_date).toLocaleString()}
+                {new Date(booking.event_date).toLocaleString()}
               </span>
             </li>
           ))}

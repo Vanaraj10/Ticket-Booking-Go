@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 export default function HomePage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -7,8 +7,13 @@ export default function HomePage() {
   const [bookingEventId, setBookingEventId] = useState(null);
   const [tickets, setTickets] = useState(1);
   const [bookingMessage, setBookingMsg] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if(!localStorage.getItem("token")) {
+      navigate("/login");
+      return;
+    }
     fetch("http://localhost:8080/events")
       .then((res) => res.json())
       .then((data) => {
@@ -50,8 +55,17 @@ export default function HomePage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setBookingMsg("successfully Boooked Tickets");
-        setBookingEventId(null);
+        setBookingMsg(`successfully Boooked ${tickets} Tickets`);
+        setEvents(events.map(event =>
+          event.id === bookingEventId
+          ? {...event,available_tickets:event.available_tickets - tickets}
+          : event
+        ))
+        setTimeout(() => {
+          setBookingEventId(null);
+          setBookingMsg("");
+          setTickets(1);
+        }, 3000);
       } else {
         setBookingMsg(
           data.error || "Failed to book tickets. Please try again."
@@ -200,6 +214,31 @@ export default function HomePage() {
             >
               Book Tickets
             </button>
+            {bookingMessage && bookingEventId===event.id && (
+                  <div
+                    style={{
+                      marginTop: 8,
+                      color: bookingMessage.includes("✅")
+                        ? "#4caf50"
+                        : "#ff5252",
+                      fontSize: "1rem",
+                      fontWeight: 500,
+                      letterSpacing: "0.2px",
+                      textAlign: "center",
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "4px",
+                      background: bookingMessage.includes("✅")
+                        ? "rgba(76, 175, 80, 0.1)"
+                        : "rgba(255, 82, 82, 0.1)",
+                      border: `1px solid ${
+                        bookingMessage.includes("✅") ? "#4caf50" : "#ff5252"
+                      }`,
+                    }}
+                  >
+                    {bookingMessage}
+                  </div>
+                )}
             {bookingEventId === event.id && (
               <form
                 onSubmit={handleBooking}
@@ -285,21 +324,6 @@ export default function HomePage() {
                     Cancel
                   </button>
                 </div>
-                {bookingMessage && (
-                  <div
-                    style={{
-                      marginTop: 8,
-                      color: "#ffd600",
-                      fontSize: "1rem",
-                      fontWeight: 500,
-                      letterSpacing: "0.2px",
-                      textAlign: "center",
-                      width: "100%",
-                    }}
-                  >
-                    {bookingMessage}
-                  </div>
-                )}
               </form>
             )}
           </li>

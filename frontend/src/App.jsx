@@ -9,7 +9,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 export default function App() {
 
   const location = useLocation();
-  const hideNavBar = location.pathname === "/admin";
+  const hideNavBar = location.pathname === "/login" || location.pathname === "/signup" || location.pathname==='/admin';
   return (
     <>
    {!hideNavBar && <NavBar />}
