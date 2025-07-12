@@ -5,7 +5,8 @@ export default function AdminDashboard() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedEventBookings, setSelectedEventBookings] = useState([]);  const [showBookingsForEventId, setShowBookingsForEventId] = useState(null);
+  const [selectedEventBookings, setSelectedEventBookings] = useState([]);
+  const [showBookingsForEventId, setShowBookingsForEventId] = useState(null);
 
   const handleDeleteEvent = (eventId) => async () => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
@@ -26,7 +27,10 @@ export default function AdminDashboard() {
         setEvents(events.filter((e) => e.id !== eventId));
         alert("Event deleted successfully!");
       } else {
-        if (data.error && data.error.includes("violates foreign key constraint")) {
+        if (
+          data.error &&
+          data.error.includes("violates foreign key constraint")
+        ) {
           alert("Cannot delete event: there are bookings for this event.");
         } else {
           alert("Failed to delete event. Please try again.");
@@ -35,7 +39,8 @@ export default function AdminDashboard() {
     } catch {
       alert("Failed to delete event. Please try again later.");
     }
-  };  const handleShowBookings = async (eventId) => {
+  };
+  const handleShowBookings = async (eventId) => {
     setShowBookingsForEventId(eventId);
     setLoading(true);
     try {
@@ -55,6 +60,12 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/login"; // Redirect to login page
+  }
 
   useEffect(() => {
     if (view === "events") {
@@ -173,8 +184,16 @@ export default function AdminDashboard() {
                   </span>
                   <span style={{ color: "#bdbdbd" }}>
                     Date: {new Date(event.event_date).toLocaleString()}
-                  </span>                  <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-                    <button 
+                  </span>{" "}
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      marginTop: 10,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <button
                       onClick={handleDeleteEvent(event.id)}
                       style={{
                         padding: "8px 16px",
@@ -191,7 +210,7 @@ export default function AdminDashboard() {
                     >
                       Delete Event
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleShowBookings(event.id)}
                       style={{
                         padding: "8px 16px",
@@ -214,7 +233,8 @@ export default function AdminDashboard() {
             </ul>
           )}
         </div>
-      )}      {view === "create" && (
+      )}{" "}
+      {view === "create" && (
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -245,7 +265,6 @@ export default function AdminDashboard() {
               if (res.ok) {
                 setView("events");
                 setLoading(false);
-                // Refresh events list
                 window.location.reload();
               } else {
                 setError(
@@ -269,7 +288,7 @@ export default function AdminDashboard() {
             flexDirection: "column",
             gap: 16,
             width: "100%",
-            boxSizing: "border-box"
+            boxSizing: "border-box",
           }}
         >
           <h3 style={{ color: "#4caf50", textAlign: "center" }}>
@@ -344,7 +363,8 @@ export default function AdminDashboard() {
             <div style={{ color: "#ff5252", marginTop: 8 }}>{error}</div>
           )}
         </form>
-      )}      {showBookingsForEventId && (
+      )}{" "}
+      {showBookingsForEventId && (
         <div
           style={{
             position: "fixed",
@@ -373,17 +393,40 @@ export default function AdminDashboard() {
               boxShadow: "0 2px 16px rgba(0,0,0,0.25)",
               position: "relative",
             }}
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ color: "#ffd600", textAlign: "center", marginBottom: "1rem" }}>
+            <h3
+              style={{
+                color: "#ffd600",
+                textAlign: "center",
+                marginBottom: "1rem",
+              }}
+            >
               Bookings for Event {selectedEventBookings[0]?.event_name}
             </h3>
             {loading ? (
-              <div style={{ textAlign: "center", padding: "2rem" }}>Loading bookings...</div>
+              <div style={{ textAlign: "center", padding: "2rem" }}>
+                Loading bookings...
+              </div>
             ) : selectedEventBookings.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "2rem", color: "#bdbdbd" }}>No bookings found.</div>
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "2rem",
+                  color: "#bdbdbd",
+                }}
+              >
+                No bookings found.
+              </div>
             ) : (
-              <ul style={{ listStyle: "none", padding: 0, maxHeight: "400px", overflowY: "auto" }}>
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  maxHeight: "400px",
+                  overflowY: "auto",
+                }}
+              >
                 {selectedEventBookings.map((booking) => (
                   <li
                     key={booking.id}
@@ -397,8 +440,10 @@ export default function AdminDashboard() {
                     }}
                   >
                     <strong>User Name:</strong> {booking.username} <br />
-                    <strong>Tickets Booked:</strong> {booking.tickets_booked} <br />
-                    <strong>Booked At:</strong> {new Date(booking.booked_at).toLocaleString()}
+                    <strong>Tickets Booked:</strong> {booking.tickets_booked}{" "}
+                    <br />
+                    <strong>Booked At:</strong>{" "}
+                    {new Date(booking.booked_at).toLocaleString()}
                   </li>
                 ))}
               </ul>
@@ -423,6 +468,11 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+      <div>
+        <button onClick={handleLogout} style={{}} >
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

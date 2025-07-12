@@ -14,6 +14,10 @@ export default function HomePage() {
       navigate("/login");
       return;
     }
+    if(localStorage.getItem('role')==='admin'){
+      navigate("/admin");
+      return null;
+    }
     fetch("http://localhost:8080/events")
       .then((res) => res.json())
       .then((data) => {
