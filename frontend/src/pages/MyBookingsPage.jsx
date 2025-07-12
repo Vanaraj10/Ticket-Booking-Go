@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import QRCode from "react-qr-code";
 
 export default function MyBookingsPage() {
   const [bookings, setBookings] = useState([]);
@@ -173,6 +174,7 @@ export default function MyBookingsPage() {
               >
                 Date: {new Date(booking.event_date).toLocaleString()}
               </span>
+              <QRCode value={booking.code} size={128} />
               <button
                 style={{
                   marginTop: 8,

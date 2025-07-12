@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import MyBookingsPage from "./pages/MyBookingsPage";
 import NavBar from "./components/NavBar";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminQRScanner from "./pages/AdminQRScanner";
 
 export default function App() {
 
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/" element={ <HomePage/> } />
       <Route path="/login" element={ <LoginPage />} />
       <Route path="/admin" element={ <AdminDashboard /> } />
+      <Route path="/admin/qr-scanner" element={ <AdminQRScanner /> } />
       <Route path="/signup" element={ <SignupPage/> } />
       <Route path="/my-bookings" element={ <MyBookingsPage/> } />
     </Routes>
