@@ -43,7 +43,6 @@ func CreateEventHandler(db *sql.DB) gin.HandlerFunc {
 		})
 	}
 }
-
 func ListEventHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		rows, err := db.Query(`SELECT id, name, description, total_tickets, available_tickets, event_date, created_by FROM events ORDER BY event_date DESC`)
@@ -83,7 +82,6 @@ func ListEventHandler(db *sql.DB) gin.HandlerFunc {
 		})
 	}
 }
-
 func BookEventHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req struct {
@@ -153,12 +151,11 @@ func BookEventHandler(db *sql.DB) gin.HandlerFunc {
 		})
 	}
 }
-
 func ListUserBookingsHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID := c.GetInt("user_id")
 
-		rows, err := db.Query(`SELECT b.id, b.event_id,e.name, b.tickets_booked, b.booked_at, e.event_date
+		rows, err := db.Query(`SELECT b.id, b.event_id,e.name, b.tickets_booked, b.booked_at, e.event_date, b.code, b.used
 			                   FROM bookings b
 							   JOIN events e ON b.event_id = e.id
 							   WHERE b.user_id = $1
@@ -176,9 +173,10 @@ func ListUserBookingsHandler(db *sql.DB) gin.HandlerFunc {
 		bookings := []map[string]interface{}{}
 		for rows.Next() {
 			var id, eventID, ticketsBooked int
-			var eventName string
+			var eventName,code string
+			var used bool
 			var bookedAt,eventDate time.Time
-			if err := rows.Scan(&id, &eventID, &eventName, &ticketsBooked, &bookedAt,&eventDate); err != nil {
+			if err := rows.Scan(&id, &eventID, &eventName, &ticketsBooked, &bookedAt,&eventDate,&code,&used); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"error":   "Failed to scan booking data",
 					"message": err.Error(),
@@ -192,6 +190,8 @@ func ListUserBookingsHandler(db *sql.DB) gin.HandlerFunc {
 				"tickets_booked": ticketsBooked,
 				"booked_at":      bookedAt,
 				"event_date":     eventDate,
+				"code":           code,
+				"used":           used,
 			})
 		}
 		c.JSON(http.StatusOK, gin.H{
@@ -199,7 +199,6 @@ func ListUserBookingsHandler(db *sql.DB) gin.HandlerFunc {
 		})
 	}
 }
-
 func ListEventBookingsHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		eventID := c.Param("event_id")
@@ -242,7 +241,6 @@ func ListEventBookingsHandler(db *sql.DB) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"bookings": bookings})
 	}
 }
-
 func DeleteEventHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		eventID := c.Param("event_id")
@@ -268,7 +266,6 @@ func DeleteEventHandler(db *sql.DB) gin.HandlerFunc {
 		})
 	}
 }
-
 func CancelBookingHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bookingID := c.Param("booking_id")
@@ -330,6 +327,47 @@ func CancelBookingHandler(db *sql.DB) gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Booking cancelled successfully",
+		})
+	}
+}
+func ValidateBookingHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req struct {
+			Code string `json:"code" binding:"required"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Invalid request data",
+				"message": err.Error(),
+			})
+			return
+		}
+
+		var used bool
+		err := db.QueryRow(`SELECT used FROM bookings WHERE code = $1`,req.Code).Scan(&used)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error":   "Booking not found",
+				"message": "No booking found with the given code",
+			})
+		}
+		if used {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Booking already used",
+				"message": "This booking code has already been used",
+			})
+			return
+		}
+		_, err = db.Exec(`UPDATE bookings SET used = true WHERE code = $1`, req.Code)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to validate booking",
+				"message": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Booking validated successfully",
 		})
 	}
 }
