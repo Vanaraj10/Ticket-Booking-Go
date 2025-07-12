@@ -9,7 +9,7 @@ export default function SignupPage() {
     e.preventDefault();
     setMessage("");
     try {
-      const res = await fetch("http://localhost:8080/signup", {
+      const res = await fetch("https://ticket-booking-go.onrender.com/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

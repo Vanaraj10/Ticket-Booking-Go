@@ -43,7 +43,7 @@ export default function AdminQRScanner() {
      setFeedback("Validating QR code...");
      const token = localStorage.getItem("token");
      try {
-        const res = await fetch("http://localhost:8080/api/admin/validate-booking",{
+        const res = await fetch("https://ticket-booking-go.onrender.com/api/admin/validate-booking",{
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,

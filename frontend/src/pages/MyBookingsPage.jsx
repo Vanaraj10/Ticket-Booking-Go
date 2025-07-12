@@ -13,7 +13,7 @@ export default function MyBookingsPage() {
       setLoading(false);
       return;
     }
-    fetch("http://localhost:8080/api/user/bookings", {
+    fetch("https://ticket-booking-go.onrender.com/api/user/bookings", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -35,7 +35,7 @@ export default function MyBookingsPage() {
       return;
     try {
       const res = await fetch(
-        `http://localhost:8080/api/user/bookings/${bookingId}`,
+        `https://ticket-booking-go.onrender.com/api/user/bookings/${bookingId}`,
         {
           method: "DELETE",
           headers: {

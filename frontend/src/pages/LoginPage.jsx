@@ -13,7 +13,7 @@ export default function LoginPage() {
     setMessage("");
     console.log("Logging in with:", { username, password });
     try {
-      const res = await fetch("http://localhost:8080/login", {
+      const res = await fetch("https://ticket-booking-go.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

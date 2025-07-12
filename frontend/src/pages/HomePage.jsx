@@ -18,7 +18,7 @@ export default function HomePage() {
       navigate("/admin");
       return null;
     }
-    fetch("http://localhost:8080/events")
+    fetch("https://ticket-booking-go.onrender.com/events")
       .then((res) => res.json())
       .then((data) => {
         setEvents(data.events || []);
@@ -46,7 +46,7 @@ export default function HomePage() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:8080/api/user/book", {
+      const res = await fetch("https://ticket-booking-go.onrender.com/api/user/book", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

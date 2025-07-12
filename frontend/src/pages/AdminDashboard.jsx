@@ -13,7 +13,7 @@ export default function AdminDashboard() {
     try {
       const token = localStorage.getItem("token"); // Get fresh token
       const res = await fetch(
-        `http://localhost:8080/api/admin/events/${eventId}`,
+        `https://ticket-booking-go.onrender.com/api/admin/events/${eventId}`,
         {
           method: "DELETE",
           headers: {
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
     try {
       const token = localStorage.getItem("token"); // Get fresh token
       const res = await fetch(
-        `http://localhost:8080/api/admin/events/${eventId}/bookings`,
+        `https://ticket-booking-go.onrender.com/api/admin/events/${eventId}/bookings`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -70,7 +70,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (view === "events") {
       setLoading(true);
-      fetch("http://localhost:8080/events")
+      fetch("https://ticket-booking-go.onrender.com/events")
         .then((res) => res.json())
         .then((data) => {
           setEvents(data.events || []);
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
             };
             try {
               const res = await fetch(
-                "http://localhost:8080/api/admin/events",
+                "https://ticket-booking-go.onrender.com/api/admin/events",
                 {
                   method: "POST",
                   headers: {
