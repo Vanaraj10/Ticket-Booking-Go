@@ -117,6 +117,9 @@ export default function LoginPage() {
       {message && (
         <p style={{ color: "#ff5252", marginTop: 16, textAlign: "center", fontSize: "1rem" }}>{message}</p>
       )}
+      <Link to="/signup" style={{ display: "block", textAlign: "center", marginTop: 10, color: "#4caf50", textDecoration: "none" }}>
+        Don't have an account? Sign Up
+      </Link>
     </div>
   );
 }

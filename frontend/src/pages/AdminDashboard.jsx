@@ -469,7 +469,19 @@ export default function AdminDashboard() {
         </div>
       )}
       <div>
-        <button onClick={handleLogout} style={{}} >
+        <button onClick={handleLogout} style={{
+                marginTop: 20,
+                padding: "10px 20px",
+                borderRadius: 8,
+                border: "none",
+                background: "red",
+                color: "#fff",
+                fontWeight: 500,
+                cursor: "pointer",
+                fontSize: "1rem",
+                width: "100%",
+              
+        }} >
           Logout
         </button>
       </div>
