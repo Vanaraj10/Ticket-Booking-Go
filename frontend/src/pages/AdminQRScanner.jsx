@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import jsQR from "jsqr";
 
+const BACKEND_URL = "https://ticket-booking-go.onrender.com";
+
 export default function AdminQRScanner() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -61,7 +63,7 @@ export default function AdminQRScanner() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        "http://localhost:8080/api/admin/validate-booking",
+        `${BACKEND_URL}/api/admin/validate-booking`,
         {
           method: "POST",
           headers: {
