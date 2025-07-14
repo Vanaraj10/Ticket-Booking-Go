@@ -9,14 +9,19 @@ export default function AdminQRScanner() {
 
   useEffect(() => {
     let stream;
+    let animationId;
     const startCamera = async () => {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-      videoRef.current.srcObject = stream;
-      videoRef.current.setAttribute("playsinline", true);
-      videoRef.current.play();
-      scan();
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
+        videoRef.current.srcObject = stream;
+        videoRef.current.setAttribute("playsinline", true);
+        videoRef.current.play();
+        scan();
+      } catch (err) {
+        setFeedback("Camera access denied or not available.");
+      }
     };
 
     const scan = () => {
@@ -26,26 +31,30 @@ export default function AdminQRScanner() {
         !scanned
       ) {
         const canvas = canvasRef.current;
+        const width = videoRef.current.videoWidth || 400;
+        const height = videoRef.current.videoHeight || 300;
+        canvas.width = width;
+        canvas.height = height;
         const ctx = canvas.getContext("2d");
-        canvas.width = videoRef.current.videoWidth;
-        canvas.height = videoRef.current.videoHeight;
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, canvas.width, canvas.height);
+        ctx.drawImage(videoRef.current, 0, 0, width, height);
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const code = jsQR(imageData.data, width, height);
         if (code) {
           setScanned(true);
           handleScan(code.data);
+          return;
         }
       }
-      requestAnimationFrame(scan);
+      animationId = requestAnimationFrame(scan);
     };
 
     startCamera();
     return () => {
       if (stream) stream.getTracks().forEach((track) => track.stop());
+      if (animationId) cancelAnimationFrame(animationId);
     };
     // eslint-disable-next-line
-  }, []);
+  }, [scanned]);
 
   const handleScan = async (data) => {
     setFeedback("Validating...");
