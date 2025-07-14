@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
   const [view, setView] = useState("events");
@@ -469,6 +470,7 @@ export default function AdminDashboard() {
         </div>
       )}
       <div>
+        <Link to={"/admin/qr-scanner"}>Admin Scanner</Link>
         <button onClick={handleLogout} style={{
                 marginTop: 20,
                 padding: "10px 20px",
